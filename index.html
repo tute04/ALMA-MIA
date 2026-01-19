@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALMA MÍA | Diseño de Autor</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;1,600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        alma: {
+                            bg: '#FAF9F6',
+                            dark: '#333333',
+                            gold: '#C5A059',
+                            taupe: '#8D837B',
+                        },
+                        fontFamily: {
+                            display: ['Cinzel', 'serif'],
+                            body: ['Montserrat', 'sans-serif'],
+                            elegant: ['Cormorant Garamond', 'serif']
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass { background: rgba(250, 249, 246, 0.95); backdrop-filter: blur(5px); }
+        [x-cloak] { display: none !important; }
+        .hero-overlay { background: linear-gradient(to top, rgba(51,51,51,0.6), rgba(51,51,51,0.2)); }
+    </style>
+</head>
+<body class="bg-alma-bg text-alma-dark font-body antialiased" x-data="shopData()">
+
+    <nav class="fixed w-full z-50 glass border-b border-alma-gold/20 py-4 shadow-sm">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="text-xl md:text-2xl font-display font-bold tracking-widest text-alma-dark">ALMA MÍA</a>
+            <div class="hidden md:flex gap-6 text-xs font-bold tracking-widest uppercase text-gray-500">
+                <a href="#marroquineria" class="hover:text-alma-gold transition">Marroquinería</a>
+                <a href="#plata" class="hover:text-alma-gold transition text-alma-dark font-bold">Plata 925</a>
+                <a href="#autor" class="hover:text-alma-gold transition">Autor</a>
+                <a href="#acero" class="hover:text-alma-gold transition">Acero</a>
+            </div>
+            <a :href="whatsappUrl" class="text-xs font-bold tracking-widest uppercase border border-alma-dark px-4 py-2 hover:bg-alma-dark hover:text-white transition">
+                Contacto
+            </a>
+        </div>
+    </nav>
+
+    <header class="relative h-[70vh] md:h-[85vh] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="WhatsApp Image 2025-12-20 at 21.02.10 (2).jpeg" 
+                 class="w-full h-full object-cover object-center" 
+                 alt="Portada Alma Mía"
+                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1920&auto=format&fit=crop';">
+            <div class="absolute inset-0 hero-overlay"></div>
+        </div>
+        <div class="relative z-10 text-center px-4 mt-20 animate-fade-in-up">
+            <h1 class="font-display text-5xl md:text-7xl font-bold mb-4 text-white drop-shadow-lg tracking-wider">ALMA MÍA</h1>
+            <p class="font-elegant text-2xl md:text-3xl italic text-gray-100 font-medium drop-shadow-md tracking-wide">cada pieza tiene una historia</p>
+            <a href="#autor" class="mt-8 inline-block bg-alma-taupe text-white px-8 py-3 text-xs font-bold tracking-[0.2em] uppercase hover:bg-alma-dark transition rounded-sm">Ver Colección</a>
+        </div>
+    </header>
+
+    <section class="py-16 px-6 bg-white text-center border-b border-alma-gold/10">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="font-display text-2xl mb-6 tracking-widest text-alma-gold">EL TALLER</h2>
+            <div class="font-elegant text-xl text-gray-600 leading-relaxed mb-8 space-y-4">
+                <p>"Hola, soy <strong class="text-alma-dark">Yani</strong>. Alma Mía es mi cable a tierra, la necesidad de crear con mis propias manos."</p> 
+                <p>Cada pieza de cuero y cada piedra tiene una historia. Cuando eliges Alma Mía, te llevas tiempo, dedicación y una parte de mi alma.</p>
+            </div>
+            <p class="font-display text-xl font-bold text-alma-dark tracking-[0.2em] border-t border-b border-alma-gold inline-block py-3 px-8">"SÉ DIFERENTE, SÉ VOS"</p>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 py-16">
+        
+        <div class="mb-20 text-center">
+            <input type="text" x-model="search" placeholder="Buscar producto..." 
+                   class="border-b border-alma-gold/30 py-3 px-6 text-center font-elegant text-xl bg-transparent focus:outline-none focus:border-alma-gold w-full max-w-md placeholder-gray-400 transition-colors">
+        </div>
+
+        <div x-show="search !== ''" x-cloak>
+            <h3 class="font-display text-xl mb-8 text-center text-gray-400">Resultados</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <template x-for="p in productosFiltrados" :key="p.id">
+                    <div class="bg-white shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col">
+                        <div class="relative w-full pt-[120%] overflow-hidden bg-[#FAF9F6]">
+                            <img :src="p.imagen" class="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                        </div>
+                        <div class="p-6 text-center flex-grow flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-display text-lg text-alma-dark mb-1" x-text="p.nombre"></h3>
+                                <p class="font-elegant text-gray-500 italic text-sm mb-3" x-text="p.descripcion"></p>
+                                <p class="font-bold text-alma-dark text-sm mb-4" x-text="p.precio === 'Consultar' ? 'Consultar Precio' : '$' + p.precio"></p>
+                            </div>
+                            <a :href="generarLink(p.nombre)" target="_blank" class="block w-full bg-alma-taupe text-white py-3 text-xs font-bold tracking-widest hover:bg-alma-dark transition uppercase rounded-sm">CONSULTA</a>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div x-show="search === ''">
+            
+            <div id="marroquineria" class="mb-32">
+                <div class="flex items-center justify-center mb-12">
+                    <div class="h-px bg-alma-gold w-16 mr-6"></div>
+                    <h2 class="font-display text-3xl md:text-4xl text-alma-dark tracking-[0.2em]">MARROQUINERÍA</h2>
+                    <div class="h-px bg-alma-gold w-16 ml-6"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <template x-for="p in productos.filter(i => i.categoria === 'Marroquinería')" :key="p.id">
+                        <div class="bg-white shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col">
+                            <div class="relative w-full pt-[120%] overflow-hidden bg-[#FAF9F6]">
+                                <img :src="p.imagen" class="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                            </div>
+                            <div class="p-6 text-center flex-grow flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-display text-lg text-alma-dark mb-1" x-text="p.nombre"></h3>
+                                    <p class="font-elegant text-gray-500 italic text-sm mb-3" x-text="p.descripcion"></p>
+                                </div>
+                                <a :href="generarLink(p.nombre)" target="_blank" class="block w-full bg-alma-taupe text-white py-3 text-xs font-bold tracking-widest hover:bg-alma-dark transition uppercase rounded-sm">CONSULTA</a>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div id="plata" class="mb-32">
+                <div class="flex items-center justify-center mb-12">
+                    <div class="h-px bg-alma-gold w-16 mr-6"></div>
+                    <h2 class="font-display text-3xl md:text-4xl text-alma-dark tracking-[0.2em]">PLATA 925</h2>
+                    <div class="h-px bg-alma-gold w-16 ml-6"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <template x-for="p in productos.filter(i => i.categoria === 'Plata')" :key="p.id">
+                        <div class="bg-white shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col">
+                            <div class="relative w-full pt-[120%] overflow-hidden bg-gray-50">
+                                <img :src="p.imagen" class="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                            </div>
+                            <div class="p-6 text-center flex-grow flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-display text-lg text-alma-dark mb-1" x-text="p.nombre"></h3>
+                                    <p class="font-elegant text-gray-500 italic text-sm mb-3" x-text="p.descripcion"></p>
+                                </div>
+                                <a :href="generarLink(p.nombre)" target="_blank" class="block w-full bg-alma-dark text-white py-3 text-xs font-bold tracking-widest hover:bg-alma-gold transition uppercase rounded-sm">CONSULTA</a>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div id="autor" class="mb-32">
+                <div class="flex items-center justify-center mb-12">
+                    <div class="h-px bg-alma-gold w-16 mr-6"></div>
+                    <h2 class="font-display text-3xl md:text-4xl text-alma-dark tracking-[0.2em]">AUTOR</h2>
+                    <div class="h-px bg-alma-gold w-16 ml-6"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <template x-for="p in productos.filter(i => i.categoria === 'Autor')" :key="p.id">
+                        <div class="bg-white shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col">
+                            <div class="relative w-full pt-[120%] overflow-hidden bg-[#FAF9F6]">
+                                <img :src="p.imagen" class="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                            </div>
+                            <div class="p-6 text-center flex-grow flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-display text-lg text-alma-dark mb-1" x-text="p.nombre"></h3>
+                                    <p class="font-elegant text-gray-500 italic text-sm mb-3" x-text="p.descripcion"></p>
+                                </div>
+                                <a :href="generarLink(p.nombre)" target="_blank" class="block w-full bg-alma-taupe text-white py-3 text-xs font-bold tracking-widest hover:bg-alma-dark transition uppercase rounded-sm">CONSULTA</a>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div id="acero" class="mb-32">
+                <div class="flex items-center justify-center mb-12">
+                    <div class="h-px bg-alma-gold w-16 mr-6"></div>
+                    <h2 class="font-display text-3xl md:text-4xl text-alma-dark tracking-[0.2em]">ACERO</h2>
+                    <div class="h-px bg-alma-gold w-16 ml-6"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <template x-for="p in productos.filter(i => i.categoria === 'Acero')" :key="p.id">
+                        <div class="bg-white shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col">
+                            <div class="relative w-full pt-[120%] overflow-hidden bg-[#FAF9F6]">
+                                <img :src="p.imagen" class="absolute top-0 left-0 w-full h-full object-contain p-4 group-hover:scale-105 transition duration-700">
+                            </div>
+                            <div class="p-6 text-center flex-grow flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-display text-lg text-alma-dark mb-1" x-text="p.nombre"></h3>
+                                    <p class="font-elegant text-gray-500 italic text-sm mb-3" x-text="p.descripcion"></p>
+                                </div>
+                                <a :href="generarLink(p.nombre)" target="_blank" class="block w-full bg-alma-taupe text-white py-3 text-xs font-bold tracking-widest hover:bg-alma-dark transition uppercase rounded-sm">CONSULTA</a>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <a :href="whatsappUrl" target="_blank" class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition duration-300 flex items-center justify-center group border-2 border-white">
+        <svg class="w-8 h-8 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+    </a>
+
+    <footer class="bg-alma-dark text-white py-12 text-center text-xs tracking-widest uppercase">
+        <p>© 2025 Alma Mía. Hecho con ❤️ en Argentina.</p>
+    </footer>
+
+    <script>
+        function shopData() {
+            return {
+                search: '',
+                telefono: '5493515401720',
+                get whatsappUrl() { return `https://wa.me/${this.telefono}`; },
+                generarLink(nombre) { return `https://wa.me/${this.telefono}?text=Hola,%20quisiera%20consultar%20por%20el%20${nombre}`; },
+                
+                get productosFiltrados() {
+                    if (this.search === '') return [];
+                    return this.productos.filter(p => p.nombre.toLowerCase().includes(this.search.toLowerCase()));
+                },
+
+                // LISTA DE PRODUCTOS V3.2 (CON TODO LO NUEVO)
+                productos: [
+                    // === PLATA 925 ===
+                    { id: 301, nombre: "Aros Gota Inflada", categoria: "Plata", precio: "Consultar", descripcion: "Plata 925. Diseño minimalista con volumen.", imagen: "WhatsApp Image 2025-12-23 at 21.44.56.jpeg" },
+                    { id: 303, nombre: "Set Silver Balls", categoria: "Plata", precio: "Consultar", descripcion: "Gargantilla y pulsera bolas plata y cadena.", imagen: "WhatsApp Image 2025-12-23 at 21.44.56 (1).jpeg" },
+                    { id: 304, nombre: "Set Amatista", categoria: "Plata", precio: "Consultar", descripcion: "Cristales violetas y dije solitario.", imagen: "WhatsApp Image 2025-12-23 at 21.44.57 (2).jpeg" },
+                    { id: 310, nombre: "Set Multicolor", categoria: "Plata", precio: "Consultar", descripcion: "Cristales facetados multicolor y dije.", imagen: "WhatsApp Image 2025-12-23 at 21.44.57 (3).jpeg" },
+                    { id: 305, nombre: "Dijes Plata Lisos", categoria: "Plata", precio: "Consultar", descripcion: "Luna, Círculo Cristal y Gota.", imagen: "WhatsApp Image 2025-12-23 at 21.44.57.jpeg" },
+                    { id: 306, nombre: "Anillos Plata Boho", categoria: "Plata", precio: "Consultar", descripcion: "Diseños anchos, hojas y texturas.", imagen: "WhatsApp Image 2025-12-23 at 21.44.55.jpeg" },
+                    { id: 307, nombre: "Dijes Plata Labrados", categoria: "Plata", precio: "Consultar", descripcion: "Cruz, Rosa y Filigrana.", imagen: "WhatsApp Image 2025-12-23 at 21.44.57 (1).jpeg" },
+
+                    // === NUEVOS INGRESOS (AUTOR - LOTE MADERA) ===
+                    { id: 401, nombre: "Collares Tubos & Cordón", categoria: "Autor", precio: "Consultar", descripcion: "Diseño artesanal con tubos de resina.", imagen: "WhatsApp Image 2025-12-28 at 18.44.57 (1).jpeg" },
+                    { id: 402, nombre: "Choker Trenzado Black", categoria: "Autor", precio: "Consultar", descripcion: "Gamuza negra trenzada con cadena plateada.", imagen: "WhatsApp Image 2025-12-24 at 17.07.44.jpeg" },
+                    { id: 403, nombre: "Choker Trenzado Camel", categoria: "Autor", precio: "Consultar", descripcion: "Gamuza suela trenzada con cadena gruesa.", imagen: "WhatsApp Image 2025-12-24 at 17.07.43.jpeg" },
+                    { id: 404, nombre: "Choker Trenzado Choco", categoria: "Autor", precio: "Consultar", descripcion: "Gamuza marrón oscuro trenzada con metal.", imagen: "WhatsApp Image 2025-12-24 at 17.07.43 (1).jpeg" },
+                    { id: 405, nombre: "Lariats Cristales", categoria: "Autor", precio: "Consultar", descripcion: "Collares largos anudados con cristales.", imagen: "WhatsApp Image 2025-12-28 at 18.45.18.jpeg" },
+                    { id: 406, nombre: "Gargantillas Multi-hilos", categoria: "Autor", precio: "Consultar", descripcion: "Multiples hilos encerados con terminales.", imagen: "WhatsApp Image 2025-12-28 at 18.44.35.jpeg" },
+                    { id: 407, nombre: "Colgantes Gota Resina", categoria: "Autor", precio: "Consultar", descripcion: "Cordón con dije gota de resina grande.", imagen: "WhatsApp Image 2025-12-28 at 18.43.54.jpeg" },
+                    { id: 408, nombre: "Colgantes Círculo Resina", categoria: "Autor", precio: "Consultar", descripcion: "Cordón grueso con dije circular jaspeado.", imagen: "WhatsApp Image 2025-12-28 at 18.44.08.jpeg" },
+                    { id: 409, nombre: "Collar Donut Brown", categoria: "Autor", precio: "Consultar", descripcion: "Multi-hilos beige con dona de resina.", imagen: "WhatsApp Image 2025-12-28 at 18.43.44.jpeg" },
+                    { id: 410, nombre: "Collar Flor Metal & Gamuza", categoria: "Autor", precio: "Consultar", descripcion: "Gamuza azul con flor metálica grande.", imagen: "WhatsApp Image 2025-12-28 at 18.46.44.jpeg" },
+                    { id: 411, nombre: "Collares Plumas & Dijes", categoria: "Autor", precio: "Consultar", descripcion: "Tiras largas con plumas y dijes hamsa.", imagen: "WhatsApp Image 2025-12-28 at 18.46.59.jpeg" },
+                    { id: 413, nombre: "Collares Cuerno Boho", categoria: "Autor", precio: "Consultar", descripcion: "Dije cuerno/colmillo con cadena y gamuza.", imagen: "WhatsApp Image 2025-12-28 at 18.46.10.jpeg" },
+                    { id: 414, nombre: "Collares Rectángulo Resina", categoria: "Autor", precio: "Consultar", descripcion: "Dije geométrico resina efecto carey/agua.", imagen: "WhatsApp Image 2025-12-28 at 18.48.41.jpeg" },
+                    { id: 415, nombre: "Collares Piedra Natural", categoria: "Autor", precio: "Consultar", descripcion: "Piedras naturales engarzadas en gamuza.", imagen: "WhatsApp Image 2025-12-28 at 18.46.25.jpeg" },
+
+                    // === NUEVOS INGRESOS (ACERO) ===
+                    { id: 412, nombre: "Rosario Pluma", categoria: "Acero", precio: "Consultar", descripcion: "Cadena de bolitas acero con pluma.", imagen: "WhatsApp Image 2025-12-28 at 18.48.15.jpeg" },
+                    { id: 416, nombre: "Corbatero Cristal", categoria: "Acero", precio: "Consultar", descripcion: "Cadena veneciana con gota de cristal.", imagen: "WhatsApp Image 2025-12-28 at 18.47.54.jpeg" },
+
+                    // === NUEVOS INGRESOS (MARROQUINERÍA) ===
+                    { id: 308, nombre: "Cinturones Rock Black", categoria: "Marroquinería", precio: "Consultar", descripcion: "Colección tachas plateadas fondo negro.", imagen: "WhatsApp Image 2025-12-23 at 21.44.57 (4).jpeg" },
+                    { id: 309, nombre: "Cinturones Rock Suela", categoria: "Marroquinería", precio: "Consultar", descripcion: "Cuero ecológico tono suela y dulce de leche.", imagen: "WhatsApp Image 2025-12-23 at 21.44.56 (2).jpeg" },
+
+                    // === MARROQUINERÍA (ANTERIORES) ===
+                    { id: 203, nombre: "Sobre Camel Chain", categoria: "Marroquinería", precio: "Consultar", descripcion: "Cuero natural color suela con detalle de cadena.", imagen: "WhatsApp Image 2025-12-21 at 09.50.21 (10).jpeg" },
+                    { id: 204, nombre: "Bandolera Vintage", categoria: "Marroquinería", precio: "Consultar", descripcion: "Cuero genuino efecto gastado artesanal.", imagen: "WhatsApp Image 2025-12-21 at 09.50.21 (11).jpeg" },
+                    { id: 205, nombre: "Portacelular Leo", categoria: "Marroquinería", precio: "Consultar", descripcion: "Combinado cuero y pelo natural estampado.", imagen: "WhatsApp Image 2025-12-21 at 09.50.21 (12).jpeg" },
+                    { id: 206, nombre: "Bandolera Cream Gold", categoria: "Marroquinería", precio: "Consultar", descripcion: "Cuero genuino combinado con grabado dorado.", imagen: "WhatsApp Image 2025-12-21 at 09.50.21 (13).jpeg" },
+                    { id: 101, nombre: "Hobo Bag Croco Rosa", categoria: "Marroquinería", precio: "Consultar", descripcion: "Cuero genuino textura croco. Color rosa pastel.", imagen: "WhatsApp Image 2025-12-21 at 09.50.20 (1).jpeg" },
+                    { id: 102, nombre: "Bandolera Suede Nude", categoria: "Marroquinería", precio: "Consultar", descripcion: "Gamuza legítima (Cuero) con herraje plateado.", imagen: "WhatsApp Image 2025-12-21 at 09.50.20.jpeg" },
+                    { id: 201, nombre: "Tote Bag Gamuza Chocolate", categoria: "Marroquinería", precio: "Consultar", descripcion: "100% Cuero gamuza genuino. Gran capacidad.", imagen: "WhatsApp Image 2025-12-21 at 09.50.20 (5).jpeg" },
+                    { id: 208, nombre: "Billetera Lima & Cardholder", categoria: "Marroquinería", precio: "Consultar", descripcion: "Diseño elegante con tarjetero extraíble.", imagen: "WhatsApp Image 2025-12-21 at 09.48.29 (3).jpeg" },
+                    { id: 202, nombre: "Billeteras Texturadas", categoria: "Marroquinería", precio: "Consultar", descripcion: "Cuero genuino texturado en colores vibrantes.", imagen: "WhatsApp Image 2025-12-21 at 09.48.30 (1).jpeg" },
+                    { id: 207, nombre: "Bolso Everlast Negro", categoria: "Marroquinería", precio: "Consultar", descripcion: "Estilo urbano deportivo. Nylon reforzado.", imagen: "WhatsApp Image 2025-12-21 at 09.48.29 (2).jpeg" },
+                    { id: 1, nombre: "Tote Bag Urbano", categoria: "Marroquinería", precio: "Consultar", descripcion: "Cierre frontal y herraje circular. Nude.", imagen: "WhatsApp Image 2025-12-19 at 08.58.15.jpeg" },
+                    { id: 2, nombre: "Bandolera Flap", categoria: "Marroquinería", precio: "Consultar", descripcion: "Textura rugosa, tapa elegante. Camel.", imagen: "WhatsApp Image 2025-12-19 at 08.58.12.jpeg" },
+                    { id: 3, nombre: "Morral Sport", categoria: "Marroquinería", precio: "Consultar", descripcion: "Correa ancha con letras. Estilo urbano.", imagen: "WhatsApp Image 2025-12-19 at 08.58.12 (1).jpeg" },
+                    { id: 5, nombre: "Bandolera Nude", categoria: "Marroquinería", precio: "Consultar", descripcion: "Detalles texturados y cierre superior.", imagen: "WhatsApp Image 2025-12-19 at 08.58.13 (1).jpeg" },
+                    { id: 39, nombre: "Hobo Bag Aquarella", categoria: "Marroquinería", precio: "Consultar", descripcion: "Negro charol brillante. Estilo 90s.", imagen: "WhatsApp Image 2025-12-20 at 20.14.23.jpeg" },
+                    { id: 40, nombre: "Bandolera Amayra", categoria: "Marroquinería", precio: "Consultar", descripcion: "Negra nylon mate. Correa ancha.", imagen: "WhatsApp Image 2025-12-20 at 20.46.19.jpeg" },
+                    { id: 41, nombre: "Morral Polo Club", categoria: "Marroquinería", precio: "Consultar", descripcion: "Cuero PU negro vertical. Unisex.", imagen: "WhatsApp Image 2025-12-20 at 20.14.59.jpeg" },
+                    { id: 42, nombre: "Camera Bag Glossy", categoria: "Marroquinería", precio: "Consultar", descripcion: "Charol negro con doble cierre.", imagen: "WhatsApp Image 2025-12-20 at 20.13.34.jpeg" },
+                    { id: 43, nombre: "Mochila Cherry", categoria: "Marroquinería", precio: "Consultar", descripcion: "Rojo vibrante texturado. Cierres metal.", imagen: "WhatsApp Image 2025-12-20 at 20.37.27.jpeg" },
+                    { id: 44, nombre: "Bandolera Dálmata", categoria: "Marroquinería", precio: "Consultar", descripcion: "Pelo natural diseño manchas.", imagen: "WhatsApp Image 2025-12-20 at 20.37.27 (1).jpeg" },
+                    { id: 45, nombre: "Bandolera Dark Leo", categoria: "Marroquinería", precio: "Consultar", descripcion: "Pelo natural leopardo oscuro.", imagen: "WhatsApp Image 2025-12-20 at 20.37.27 (2).jpeg" },
+                    { id: 46, nombre: "Tote Bag Glam", categoria: "Marroquinería", precio: "Consultar", descripcion: "Cuero dorado y leopardo.", imagen: "WhatsApp Image 2025-12-20 at 20.37.30 (1).jpeg" },
+                    { id: 47, nombre: "Tote Reptil Camel", categoria: "Marroquinería", precio: "Consultar", descripcion: "Cuero calado textura reptil.", imagen: "WhatsApp Image 2025-12-20 at 20.37.30 (2).jpeg" },
+                    { id: 48, nombre: "Bandolera Snake", categoria: "Marroquinería", precio: "Consultar", descripcion: "Negro metalizado textura reptil.", imagen: "WhatsApp Image 2025-12-20 at 20.37.30 (3).jpeg" },
+                    { id: 50, nombre: "Bandolera Green", categoria: "Marroquinería", precio: "Consultar", descripcion: "Combinada verde y reptil.", imagen: "WhatsApp Image 2025-12-20 at 20.37.30.jpeg" },
+
+                    // === AUTOR ===
+                    { id: 65, nombre: "Luna Calada", categoria: "Autor", precio: "Consultar", descripcion: "Dije luna creciente encaje.", imagen: "WhatsApp Image 2025-12-20 at 21.02.09 (2).jpeg" },
+                    { id: 20, nombre: "Collares Ágata", categoria: "Autor", precio: "Consultar", descripcion: "Verde profundo y negro.", imagen: "WhatsApp Image 2025-12-19 at 09.07.10.jpeg" },
+                    { id: 53, nombre: "Collares Piedra & Metal", categoria: "Autor", precio: "Consultar", descripcion: "Cadenas largas y metal texturado.", imagen: "WhatsApp Image 2025-12-20 at 21.02.11 (2).jpeg" },
+                    { id: 52, nombre: "Collar Lapis Lazuli", categoria: "Autor", precio: "Consultar", descripcion: "Piedra natural azul, dije candado.", imagen: "WhatsApp Image 2025-12-20 at 21.02.12 (2).jpeg" },
+                    { id: 22, nombre: "Óvalos Piedra", categoria: "Autor", precio: "Consultar", descripcion: "Colgantes piedra pulida.", imagen: "WhatsApp Image 2025-12-19 at 08.58.20.jpeg" },
+                    { id: 62, nombre: "Colgantes Vidrio", categoria: "Autor", precio: "Consultar", descripcion: "Vidrio fusión, piezas únicas.", imagen: "WhatsApp Image 2025-12-20 at 21.02.10 (2).jpeg" },
+                    { id: 66, nombre: "Collar Ojo de Tigre", categoria: "Autor", precio: "Consultar", descripcion: "Piedras naturales marrones.", imagen: "WhatsApp Image 2025-12-20 at 21.02.09.jpeg" },
+                    { id: 17, nombre: "Luna Invertida", categoria: "Autor", precio: "Consultar", descripcion: "Metal fundido y cuero.", imagen: "WhatsApp Image 2025-12-19 at 08.58.18.jpeg" },
+                    { id: 18, nombre: "Esfera Jaula", categoria: "Autor", precio: "Consultar", descripcion: "Dije geométrico con esfera interna.", imagen: "WhatsApp Image 2025-12-19 at 08.58.19.jpeg" },
+                    { id: 19, nombre: "Rodajas Ágata", categoria: "Autor", precio: "Consultar", descripcion: "Piedras naturales corte transversal.", imagen: "WhatsApp Image 2025-12-19 at 08.58.20 (1).jpeg" },
+                    { id: 21, nombre: "Piedras Rústicas", categoria: "Autor", precio: "Consultar", descripcion: "Cuarzo rosa y amatista en bruto.", imagen: "WhatsApp Image 2025-12-19 at 08.58.21 (2).jpeg" },
+                    { id: 23, nombre: "Cruces Piedra", categoria: "Autor", precio: "Consultar", descripcion: "Cruz de piedra azul/negra.", imagen: "WhatsApp Image 2025-12-19 at 08.58.21 (1).jpeg" },
+                    { id: 24, nombre: "Cuerno Turquesa", categoria: "Autor", precio: "Consultar", descripcion: "Estilo boho con cuentas madera.", imagen: "WhatsApp Image 2025-12-19 at 09.07.07 (2).jpeg" },
+                    { id: 25, nombre: "Cuerno Silver", categoria: "Autor", precio: "Consultar", descripcion: "Amuleto plateado cuentas blancas.", imagen: "WhatsApp Image 2025-12-19 at 09.07.07 (1).jpeg" },
+                    { id: 26, nombre: "Flecos Jean", categoria: "Autor", precio: "Consultar", descripcion: "Reciclaje textil denim.", imagen: "WhatsApp Image 2025-12-19 at 09.07.09 (1).jpeg" },
+                    { id: 27, nombre: "Flecos Gamuza", categoria: "Autor", precio: "Consultar", descripcion: "Azul marino profundo.", imagen: "WhatsApp Image 2025-12-19 at 08.58.20 (2).jpeg" },
+                    { id: 28, nombre: "Dije Cuadrado", categoria: "Autor", precio: "Consultar", descripcion: "Geometría con fleco denim.", imagen: "WhatsApp Image 2025-12-19 at 09.07.09.jpeg" },
+                    { id: 29, nombre: "Aro Maxi Jean", categoria: "Autor", precio: "Consultar", descripcion: "Círculo grande con tiras mixtas.", imagen: "WhatsApp Image 2025-12-19 at 09.07.09 (2).jpeg" },
+                    { id: 30, nombre: "Set Pulseras Jean", categoria: "Autor", precio: "Consultar", descripcion: "Rígidas forradas en jean.", imagen: "WhatsApp Image 2025-12-19 at 09.07.08.jpeg" },
+                    { id: 49, nombre: "Brazaletes Denim", categoria: "Autor", precio: "Consultar", descripcion: "Puños bordados a mano.", imagen: "WhatsApp Image 2025-12-20 at 20.37.30 (4).jpeg" },
+                    { id: 51, nombre: "Pulseras Roll-on", categoria: "Autor", precio: "Consultar", descripcion: "Set mostacillas crochet.", imagen: "WhatsApp Image 2025-12-20 at 21.02.13.jpeg" },
+                    { id: 54, nombre: "Collar Tejido Nacar", categoria: "Autor", precio: "Consultar", descripcion: "Tejido para atar con bolitas de nácar.", imagen: "WhatsApp Image 2025-12-20 at 21.02.12 (1).jpeg" },
+                    { id: 55, nombre: "Collar Tejido Cristales", categoria: "Autor", precio: "Consultar", descripcion: "Gargantilla delicada cristales salpicados.", imagen: "WhatsApp Image 2025-12-20 at 21.02.11 (1).jpeg" },
+                    { id: 56, nombre: "Collar Gota Negra", categoria: "Autor", precio: "Consultar", descripcion: "Ágata negra lágrima.", imagen: "WhatsApp Image 2025-12-20 at 21.02.12.jpeg" },
+                    { id: 57, nombre: "Gargantilla Tejida Cristales", categoria: "Autor", precio: "Consultar", descripcion: "Hilo invisible con cristales.", imagen: "WhatsApp Image 2025-12-20 at 21.02.12 (3).jpeg" },
+                    { id: 59, nombre: "Collares Corbateros", categoria: "Autor", precio: "Consultar", descripcion: "Estilo Y con borlas de gamuza.", imagen: "WhatsApp Image 2025-12-20 at 21.02.13 (1).jpeg" },
+                    { id: 60, nombre: "Collar Rojo Tassel", categoria: "Autor", precio: "Consultar", descripcion: "Gamuza roja con borla larga.", imagen: "WhatsApp Image 2025-12-20 at 21.03.02.jpeg" },
+                    { id: 64, nombre: "Collar Verde Etnico", categoria: "Autor", precio: "Consultar", descripcion: "Cuentas facetadas verdes.", imagen: "WhatsApp Image 2025-12-20 at 21.02.09 (1).jpeg" },
+                    { id: 38, nombre: "Sombreros Piluso", categoria: "Autor", precio: "Consultar", descripcion: "Tejidos artesanales.", imagen: "WhatsApp Image 2025-12-19 at 09.07.07.jpeg" },
+                    { id: 31, nombre: "Trenzado Rojo", categoria: "Autor", precio: "Consultar", descripcion: "Cadena gruesa y gamuza.", imagen: "WhatsApp Image 2025-12-19 at 08.58.21 (4).jpeg" },
+                    { id: 35, nombre: "Trenzado Cintas", categoria: "Autor", precio: "Consultar", descripcion: "Mix de cintas azul y marrón.", imagen: "WhatsApp Image 2025-12-19 at 08.58.21 (3).jpeg" },
+                    { id: 36, nombre: "Chokers Cuentas", categoria: "Autor", precio: "Consultar", descripcion: "Mix de mostacillas facetadas.", imagen: "WhatsApp Image 2025-12-19 at 08.58.15 (2).jpeg" },
+                    { id: 37, nombre: "Dijes Abstractos", categoria: "Autor", precio: "Consultar", descripcion: "Colgantes irregulares plateados.", imagen: "WhatsApp Image 2025-12-19 at 09.07.06.jpeg" },
+
+                    // === ACERO ===
+                    { id: 302, nombre: "Aros Argolla Texturada", categoria: "Acero", precio: "Consultar", descripcion: "Acero quirúrgico. Acabado trabajado brillante.", imagen: "WhatsApp Image 2025-12-23 at 21.44.55 (1).jpeg" },
+                    { id: 63, nombre: "Pulseras Strass Red", categoria: "Acero", precio: "Consultar", descripcion: "Estilo tennis, cristales rojos.", imagen: "WhatsApp Image 2025-12-20 at 21.02.10 (1).jpeg" },
+                    { id: 6, nombre: "Libélula Acero", categoria: "Acero", precio: "Consultar", descripcion: "Dije libélula detalles dorados.", imagen: "WhatsApp Image 2025-12-19 at 08.58.15 (3).jpeg" },
+                    { id: 7, nombre: "Corazón Simple", categoria: "Acero", precio: "Consultar", descripcion: "Silueta corazón minimalista.", imagen: "WhatsApp Image 2025-12-19 at 08.58.16 (1).jpeg" },
+                    { id: 8, nombre: "Corazón Puff", categoria: "Acero", precio: "Consultar", descripcion: "Dije corazón con volumen.", imagen: "WhatsApp Image 2025-12-19 at 08.58.16 (2).jpeg" },
+                    { id: 9, nombre: "Cruz Barroca", categoria: "Acero", precio: "Consultar", descripcion: "Cruz detalles corazones.", imagen: "WhatsApp Image 2025-12-19 at 08.58.16.jpeg" },
+                    { id: 10, nombre: "Dije Circular", categoria: "Acero", precio: "Consultar", descripcion: "Círculo textura corazones.", imagen: "WhatsApp Image 2025-12-19 at 08.58.17.jpeg" },
+                    { id: 11, nombre: "San Benito", categoria: "Acero", precio: "Consultar", descripcion: "Medalla protectora.", imagen: "WhatsApp Image 2025-12-19 at 08.58.17 (2).jpeg" },
+                    { id: 12, nombre: "Árbol de la Vida", categoria: "Acero", precio: "Consultar", descripcion: "Corte láser fondo negro.", imagen: "WhatsApp Image 2025-12-19 at 08.58.17 (1).jpeg" },
+                    { id: 13, nombre: "Dije Redondo", categoria: "Acero", precio: "Consultar", descripcion: "Diseño trenzado circular.", imagen: "WhatsApp Image 2025-12-19 at 08.58.16 (3).jpeg" },
+                    { id: 14, nombre: "Cruz Cuadrada", categoria: "Acero", precio: "Consultar", descripcion: "Textura geométrica red.", imagen: "WhatsApp Image 2025-12-19 at 08.58.16 (4).jpeg" },
+                    { id: 15, nombre: "Cadena Snake", categoria: "Acero", precio: "Consultar", descripcion: "Tejido plano fluido.", imagen: "WhatsApp Image 2025-12-19 at 08.58.19 (1).jpeg" },
+                    { id: 58, nombre: "Brazaletes Cuffs", categoria: "Acero", precio: "Consultar", descripcion: "Esclavas anchas rígidas.", imagen: "WhatsApp Image 2025-12-20 at 21.02.34.jpeg" },
+                    { id: 61, nombre: "Tobilleras Margaritas", categoria: "Acero", precio: "Consultar", descripcion: "Delicadas con flores.", imagen: "WhatsApp Image 2025-12-20 at 21.02.10.jpeg" },
+                ]
+            }
+        }
+    </script>
+</body>
+</html>
