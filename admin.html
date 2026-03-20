@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALMA MÍA — Panel Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="productos.js"></script>
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background: #1a1a1a; }
+        .gold { color: #B89650; }
+        .btn-gold { background:#B89650; color:white; padding:8px 20px; border:none; cursor:pointer; font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600; transition:background 0.2s; }
+        .btn-gold:hover { background:#8D6B30; }
+        .btn-dark { background:#2C2C2C; color:white; padding:8px 20px; border:none; cursor:pointer; font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600; transition:background 0.2s; }
+        .btn-dark:hover { background:#444; }
+        .btn-red  { background:#c0392b; color:white; padding:6px 14px; border:none; cursor:pointer; font-size:11px; letter-spacing:1px; text-transform:uppercase; font-weight:600; transition:background 0.2s; }
+        .btn-red:hover { background:#e74c3c; }
+        .btn-green { background:#27ae60; color:white; padding:6px 14px; border:none; cursor:pointer; font-size:11px; letter-spacing:1px; text-transform:uppercase; font-weight:600; transition:background 0.2s; }
+        .btn-green:hover { background:#2ecc71; }
+        .input { width:100%; padding:10px 14px; background:#2a2a2a; border:1px solid #444; color:white; font-size:13px; outline:none; border-radius:4px; }
+        .input:focus { border-color:#B89650; }
+        select.input option { background:#2a2a2a; }
+        .card-admin { background:#252525; border:1px solid #333; border-radius:6px; padding:16px; transition:border-color 0.2s; }
+        .card-admin:hover { border-color:#B89650; }
+        .badge { display:inline-block; padding:2px 10px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; border-radius:2px; }
+        .badge-active  { background:#1a3a1a; color:#27ae60; border:1px solid #27ae60; }
+        .badge-hidden  { background:#3a1a1a; color:#c0392b; border:1px solid #c0392b; }
+        .tab { padding:8px 20px; cursor:pointer; font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600; border-bottom:2px solid transparent; color:#888; transition:all 0.2s; }
+        .tab.active { color:#B89650; border-bottom-color:#B89650; }
+        .toast { position:fixed; top:20px; right:20px; background:#27ae60; color:white; padding:14px 24px; border-radius:4px; font-size:12px; font-weight:600; z-index:9999; transform:translateX(200px); opacity:0; transition:all 0.3s; }
+        .toast.show { transform:translateX(0); opacity:1; }
+    </style>
+</head>
+<body>
+
+<div id="toast" class="toast">✓ Guardado</div>
+
+<!-- LOGIN -->
+<div id="login-screen" class="min-h-screen flex items-center justify-center">
+    <div style="background:#252525; border:1px solid #333; padding:48px; border-radius:8px; width:360px;">
+        <h1 style="font-family:'Cinzel',serif; color:#B89650; font-size:24px; text-align:center; letter-spacing:4px; margin-bottom:6px;">ALMA MÍA</h1>
+        <p style="color:#666; font-size:11px; text-align:center; letter-spacing:2px; margin-bottom:32px;">PANEL DE ADMINISTRACIÓN</p>
+        <div style="margin-bottom:16px;">
+            <label style="color:#888; font-size:11px; letter-spacing:1px; display:block; margin-bottom:6px;">CONTRASEÑA</label>
+            <input type="password" id="password-input" class="input" placeholder="••••••••"
+                   onkeydown="if(event.key==='Enter') checkPass()">
+        </div>
+        <button class="btn-gold" style="width:100%; padding:12px;" onclick="checkPass()">INGRESAR</button>
+        <p id="login-error" style="color:#c0392b; font-size:11px; text-align:center; margin-top:12px; display:none;">Contraseña incorrecta</p>
+    </div>
+</div>
+
+<!-- MAIN ADMIN PANEL -->
+<div id="admin-panel" style="display:none;" class="min-h-screen">
+
+    <!-- Header -->
+    <div style="background:#111; border-bottom:1px solid #333; padding:16px 24px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <h1 style="font-family:'Cinzel',serif; color:#B89650; font-size:20px; letter-spacing:3px;">ALMA MÍA</h1>
+            <p style="color:#555; font-size:10px; letter-spacing:2px; text-transform:uppercase;">Panel de administración</p>
+        </div>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <a href="index.html" class="btn-dark" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                ← Ver tienda
+            </a>
+            <button class="btn-gold" onclick="exportar()">📋 Exportar JSON</button>
+            <button onclick="logout()" style="background:none; border:1px solid #444; color:#888; padding:8px 16px; cursor:pointer; font-size:11px; letter-spacing:1px; text-transform:uppercase;">Salir</button>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="background:#1d1d1d; border-bottom:1px solid #333; padding:0 24px; display:flex; gap:0;">
+        <div class="tab active" id="tab-lista" onclick="switchTab('lista')">📦 Productos</div>
+        <div class="tab" id="tab-nuevo" onclick="switchTab('nuevo')">+ Agregar Nuevo</div>
+        <div class="tab" id="tab-exportar" onclick="switchTab('exportar')">📋 Exportar</div>
+    </div>
+
+    <div style="max-width:1200px; margin:0 auto; padding:24px;">
+
+        <!-- LISTA DE PRODUCTOS -->
+        <div id="panel-lista">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:gap:10px;">
+                <h2 style="color:white; font-size:14px; letter-spacing:2px; text-transform:uppercase;">Todos los productos</h2>
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <input type="text" id="filter-input" class="input" style="width:220px;" placeholder="Buscar..." oninput="renderLista()">
+                    <select id="filter-cat" class="input" style="width:160px;" onchange="renderLista()">
+                        <option value="">Todas las categorías</option>
+                        <option value="Marroquinería">Marroquinería</option>
+                        <option value="Plata">Plata 925</option>
+                        <option value="Autor">Autor</option>
+                        <option value="Acero">Acero</option>
+                    </select>
+                    <select id="filter-estado" class="input" style="width:140px;" onchange="renderLista()">
+                        <option value="">Todos</option>
+                        <option value="activo">Activos</option>
+                        <option value="oculto">Ocultos</option>
+                    </select>
+                </div>
+            </div>
+            <p id="total-label" style="color:#555; font-size:11px; letter-spacing:1px; margin-bottom:16px;"></p>
+            <div id="product-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px;"></div>
+        </div>
+
+        <!-- AGREGAR NUEVO -->
+        <div id="panel-nuevo" style="display:none; max-width:600px;">
+            <h2 style="color:white; font-size:14px; letter-spacing:2px; text-transform:uppercase; margin-bottom:24px;">Agregar Nuevo Producto</h2>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <div>
+                    <label style="color:#888; font-size:11px; letter-spacing:1px; display:block; margin-bottom:6px;">NOMBRE DEL PRODUCTO *</label>
+                    <input type="text" id="new-nombre" class="input" placeholder="Ej: Collar Plateado Boho">
+                </div>
+                <div>
+                    <label style="color:#888; font-size:11px; letter-spacing:1px; display:block; margin-bottom:6px;">CATEGORÍA *</label>
+                    <select id="new-categoria" class="input">
+                        <option value="Marroquinería">Marroquinería</option>
+                        <option value="Plata">Plata 925</option>
+                        <option value="Autor">Autor</option>
+                        <option value="Acero">Acero</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="color:#888; font-size:11px; letter-spacing:1px; display:block; margin-bottom:6px;">DESCRIPCIÓN</label>
+                    <input type="text" id="new-descripcion" class="input" placeholder="Descripción corta del producto">
+                </div>
+                <div>
+                    <label style="color:#888; font-size:11px; letter-spacing:1px; display:block; margin-bottom:6px;">URL DE LA IMAGEN</label>
+                    <input type="text" id="new-imagen" class="input" placeholder="https://raw.githubusercontent.com/tute04/ALMA-MIA/main/foto.jpeg">
+                    <p style="color:#555; font-size:11px; margin-top:6px;">Sube la foto a GitHub y pegá la URL aquí, o usá un link de Google Photos / Drive con acceso público.</p>
+                </div>
+                <div id="new-preview" style="display:none; margin-top:8px;">
+                    <img id="new-preview-img" style="width:120px; height:120px; object-fit:cover; border-radius:4px; border:1px solid #444;" src="" alt="preview">
+                </div>
+                <div style="margin-top:8px;">
+                    <button class="btn-gold" style="padding:12px 32px;" onclick="agregarProducto()">✓ AGREGAR PRODUCTO</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXPORTAR JSON -->
+        <div id="panel-exportar" style="display:none; max-width:700px;">
+            <h2 style="color:white; font-size:14px; letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;">Exportar productos.js</h2>
+            <p style="color:#666; font-size:12px; margin-bottom:20px; line-height:1.6;">
+                Esto genera el contenido actualizado de <code style="background:#333; padding:2px 6px; border-radius:3px; color:#B89650;">productos.js</code> con todos los cambios que hiciste (ocultos, ediciones).<br>
+                Copia el contenido y mandáselo a tu hijo para que lo suba a GitHub, así los cambios se ven en internet.
+            </p>
+            <button class="btn-gold" onclick="exportar()" style="margin-bottom:16px;">📋 Copiar al portapapeles</button>
+            <textarea id="export-area" class="input" style="height:400px; font-size:11px; font-family:monospace; resize:vertical; line-height:1.5;" readonly></textarea>
+        </div>
+
+    </div><!-- end padding -->
+</div><!-- end admin panel -->
+
+<!-- MODAL EDITAR -->
+<div id="edit-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:#252525; border:1px solid #444; border-radius:8px; padding:32px; width:520px; max-width:95vw; max-height:90vh; overflow-y:auto;">
+        <h3 style="color:#B89650; font-size:13px; letter-spacing:3px; text-transform:uppercase; margin-bottom:24px;">Editar Producto</h3>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+            <input type="hidden" id="edit-id">
+            <div>
+                <label style="color:#888; font-size:11px; letter-spacing:1px; display:block; margin-bottom:5px;">NOMBRE</label>
+                <input type="text" id="edit-nombre" class="input">
+            </div>
+            <div>
+                <label style="color:#888; font-size:11px; letter-spacing:1px; display:block; margin-bottom:5px;">CATEGORÍA</label>
+                <select id="edit-categoria" class="input">
+                    <option value="Marroquinería">Marroquinería</option>
+                    <option value="Plata">Plata 925</option>
+                    <option value="Autor">Autor</option>
+                    <option value="Acero">Acero</option>
+                </select>
+            </div>
+            <div>
+                <label style="color:#888; font-size:11px; letter-spacing:1px; display:block; margin-bottom:5px;">DESCRIPCIÓN</label>
+                <input type="text" id="edit-descripcion" class="input">
+            </div>
+            <div>
+                <label style="color:#888; font-size:11px; letter-spacing:1px; display:block; margin-bottom:5px;">URL IMAGEN</label>
+                <input type="text" id="edit-imagen" class="input">
+            </div>
+        </div>
+        <div style="display:flex; gap:12px; margin-top:24px;">
+            <button class="btn-gold" onclick="guardarEdicion()">✓ GUARDAR</button>
+            <button class="btn-dark" onclick="cerrarModal()">CANCELAR</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ─── CONTRASEÑA ──────────────────────────────────────────────────────
+const PASS = 'almamia2025'; // Cambiá esto si querés
+
+function checkPass() {
+    const val = document.getElementById('password-input').value;
+    if (val === PASS) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        renderLista();
+        generarExport();
+    } else {
+        document.getElementById('login-error').style.display = 'block';
+    }
+}
+
+function logout() {
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('password-input').value = '';
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────
+function switchTab(tab) {
+    ['lista','nuevo','exportar'].forEach(t => {
+        document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+        document.getElementById('panel-'+t).style.display = t === tab ? 'block' : 'none';
+    });
+    if (tab === 'exportar') generarExport();
+}
+
+// ─── STORAGE ──────────────────────────────────────────────────────────
+function getOverrides() { return JSON.parse(localStorage.getItem('alma_overrides') || '[]'); }
+function getNuevos()    { return JSON.parse(localStorage.getItem('alma_nuevos')    || '[]'); }
+function saveOverrides(arr) { localStorage.setItem('alma_overrides', JSON.stringify(arr)); }
+function saveNuevos(arr)    { localStorage.setItem('alma_nuevos',    JSON.stringify(arr)); }
+
+function getProductoFinal(base) {
+    const ov = getOverrides().find(o => o.id === base.id);
+    return ov ? { ...base, ...ov } : { ...base };
+}
+
+function getAllProductos() {
+    const base   = PRODUCTOS_BASE.map(p => getProductoFinal(p));
+    const nuevos = getNuevos().map(p => { const ov = getOverrides().find(o => o.id === p.id); return ov ? {...p,...ov} : {...p}; });
+    return base.concat(nuevos);
+}
+
+// ─── LISTA ────────────────────────────────────────────────────────────
+function renderLista() {
+    const search  = (document.getElementById('filter-input')?.value || '').toLowerCase();
+    const cat     = document.getElementById('filter-cat')?.value    || '';
+    const estado  = document.getElementById('filter-estado')?.value || '';
+
+    let list = getAllProductos().filter(p => {
+        if (search && !p.nombre.toLowerCase().includes(search) && !p.categoria.toLowerCase().includes(search)) return false;
+        if (cat && p.categoria !== cat) return false;
+        if (estado === 'activo' && p.oculto)  return false;
+        if (estado === 'oculto' && !p.oculto) return false;
+        return true;
+    });
+
+    document.getElementById('total-label').textContent = `Mostrando ${list.length} producto${list.length !== 1 ? 's' : ''}`;
+
+    const grid = document.getElementById('product-grid');
+    grid.innerHTML = list.map(p => `
+        <div class="card-admin">
+            <div style="position:relative; width:100%; padding-top:75%; overflow:hidden; background:#1a1a1a; border-radius:4px; margin-bottom:12px;">
+                <img src="${p.imagen}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;"
+                     onerror="this.style.display='none'">
+                <span style="position:absolute;top:8px;right:8px;" class="badge ${p.oculto ? 'badge-hidden' : 'badge-active'}">${p.oculto ? 'Oculto' : 'Activo'}</span>
+                ${p.id >= 9000 ? '<span style="position:absolute;top:8px;left:8px;background:#B89650;color:white;font-size:9px;padding:2px 8px;letter-spacing:1px;font-weight:700;text-transform:uppercase;">NUEVO</span>' : ''}
+            </div>
+            <h3 style="color:white; font-size:13px; font-weight:600; margin-bottom:4px;">${p.nombre}</h3>
+            <p style="color:#B89650; font-size:10px; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">${p.categoria}</p>
+            <p style="color:#666; font-size:11px; margin-bottom:14px; line-height:1.5;">${p.descripcion || ''}</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn-dark" style="flex:1; padding:7px;" onclick='abrirModal(${p.id})'>✏️ Editar</button>
+                <button class="${p.oculto ? 'btn-green' : 'btn-red'}" style="flex:1; padding:7px;"
+                        onclick="toggleOculto(${p.id})">${p.oculto ? '👁 Mostrar' : '🚫 Ocultar'}</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ─── TOGGLE OCULTO ────────────────────────────────────────────────────
+function toggleOculto(id) {
+    const overrides = getOverrides();
+    const idx = overrides.findIndex(o => o.id === id);
+    const prod = getAllProductos().find(p => p.id === id);
+    const nuevoEstado = !prod.oculto;
+
+    if (idx >= 0) overrides[idx].oculto = nuevoEstado;
+    else overrides.push({ id, oculto: nuevoEstado });
+    saveOverrides(overrides);
+    showToast(nuevoEstado ? '🚫 Producto ocultado' : '👁 Producto visible');
+    renderLista();
+    generarExport();
+}
+
+// ─── EDITAR ───────────────────────────────────────────────────────────
+function abrirModal(id) {
+    const p = getAllProductos().find(p => p.id === id);
+    document.getElementById('edit-id').value        = id;
+    document.getElementById('edit-nombre').value    = p.nombre;
+    document.getElementById('edit-categoria').value = p.categoria;
+    document.getElementById('edit-descripcion').value = p.descripcion || '';
+    document.getElementById('edit-imagen').value    = p.imagen || '';
+    document.getElementById('edit-modal').style.display = 'flex';
+}
+
+function cerrarModal() { document.getElementById('edit-modal').style.display = 'none'; }
+
+function guardarEdicion() {
+    const id  = parseInt(document.getElementById('edit-id').value);
+    const ov  = {
+        id,
+        nombre:      document.getElementById('edit-nombre').value.trim(),
+        categoria:   document.getElementById('edit-categoria').value,
+        descripcion: document.getElementById('edit-descripcion').value.trim(),
+        imagen:      document.getElementById('edit-imagen').value.trim(),
+    };
+    const overrides = getOverrides();
+    const idx = overrides.findIndex(o => o.id === id);
+    if (idx >= 0) overrides[idx] = { ...overrides[idx], ...ov };
+    else overrides.push(ov);
+
+    saveOverrides(overrides);
+
+    // También actualizar en nuevos si es un producto nuevo
+    const nuevos = getNuevos();
+    const nidx = nuevos.findIndex(n => n.id === id);
+    if (nidx >= 0) {
+        nuevos[nidx] = { ...nuevos[nidx], ...ov };
+        saveNuevos(nuevos);
+    }
+
+    cerrarModal();
+    showToast('✅ Producto guardado');
+    renderLista();
+    generarExport();
+}
+
+// ─── AGREGAR NUEVO ────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    const imgInput = document.getElementById('new-imagen');
+    if (imgInput) {
+        imgInput.addEventListener('input', function() {
+            const preview = document.getElementById('new-preview');
+            const img     = document.getElementById('new-preview-img');
+            if (this.value.startsWith('http')) {
+                img.src = this.value;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+    }
+});
+
+function agregarProducto() {
+    const nombre = document.getElementById('new-nombre').value.trim();
+    if (!nombre) { alert('El nombre es obligatorio'); return; }
+
+    const nuevos = getNuevos();
+    const newId  = 9000 + Date.now() % 100000;
+
+    nuevos.push({
+        id:          newId,
+        nombre,
+        categoria:   document.getElementById('new-categoria').value,
+        descripcion: document.getElementById('new-descripcion').value.trim(),
+        imagen:      document.getElementById('new-imagen').value.trim(),
+        precio:      'Consultar',
+        oculto:      false,
+    });
+
+    saveNuevos(nuevos);
+    document.getElementById('new-nombre').value      = '';
+    document.getElementById('new-descripcion').value = '';
+    document.getElementById('new-imagen').value      = '';
+    document.getElementById('new-preview').style.display = 'none';
+
+    showToast('✅ Producto agregado');
+    switchTab('lista');
+    renderLista();
+    generarExport();
+}
+
+// ─── EXPORTAR ─────────────────────────────────────────────────────────
+function generarExport() {
+    const lista = getAllProductos();
+    const lineas = lista.map(p => {
+        const ocultoStr = p.oculto ? ', oculto: true' : '';
+        return `    { id: ${p.id}, nombre: ${JSON.stringify(p.nombre)}, categoria: ${JSON.stringify(p.categoria)}, precio: "Consultar", descripcion: ${JSON.stringify(p.descripcion || '')}, imagen: ${JSON.stringify(p.imagen || '')}${ocultoStr} }`;
+    }).join(',\n');
+
+    const output = `// ============================================================
+//  ALMA MÍA — Lista de Productos (Exportado desde Admin)
+// ============================================================
+
+const PRODUCTOS_BASE = [\n${lineas}\n];\n`;
+
+    const ta = document.getElementById('export-area');
+    if (ta) ta.value = output;
+    return output;
+}
+
+function exportar() {
+    const txt = generarExport();
+    navigator.clipboard.writeText(txt).then(() => {
+        showToast('📋 Copiado al portapapeles');
+    }).catch(() => {
+        alert('Seleccioná el texto del cuadro y copialo manualmente (Ctrl+A, Ctrl+C)');
+    });
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Close modal clicking outside
+document.getElementById('edit-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+});
+</script>
+
+</body>
+</html>
