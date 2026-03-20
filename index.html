@@ -12,7 +12,6 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="productos.js"></script>
 
     <script>
         tailwind.config = {
@@ -152,8 +151,14 @@
                class="border-b-2 border-alma-gold/50 py-3 px-6 text-center font-elegant text-xl bg-transparent focus:outline-none focus:border-alma-gold w-full max-w-sm placeholder-gray-400 transition-colors"/>
     </div>
 
+    <!-- Spinner de Carga -->
+    <div x-show="loading" class="flex flex-col items-center justify-center py-20">
+        <div class="w-12 h-12 border-4 border-alma-gold border-t-transparent rounded-full animate-spin"></div>
+        <p class="font-elegant text-gray-500 italic mt-4 text-xl">Cargando catálogo...</p>
+    </div>
+
     <!-- Resultados de búsqueda -->
-    <div x-show="search !== ''" x-cloak>
+    <div x-show="!loading && search !== ''" x-cloak>
         <h3 class="font-display text-xl mb-8 text-center text-gray-400">Resultados</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             <template x-for="p in productosFiltrados" :key="p.id">
@@ -178,7 +183,7 @@
     </div>
 
     <!-- Catálogo por secciones -->
-    <div x-show="search === ''">
+    <div x-show="!loading && search === ''" x-cloak>
 
         <!-- MARROQUINERÍA -->
         <section id="marroquineria" class="mb-32">
@@ -320,26 +325,48 @@
     });
 
     function shopData() {
-        // Cargar overrides del admin desde localStorage
-        const overrides = JSON.parse(localStorage.getItem('alma_overrides') || '[]');
-        const nuevos    = JSON.parse(localStorage.getItem('alma_nuevos')    || '[]');
-
-        // Aplicar overrides a la lista base
-        let lista = PRODUCTOS_BASE.map(p => {
-            const ov = overrides.find(o => o.id === p.id);
-            return ov ? { ...p, ...ov } : { ...p };
-        });
-
-        // Agregar productos nuevos del admin
-        lista = lista.concat(nuevos);
-
         return {
+            loading: true,
             search: '',
             mobileOpen: false,
             telefono: '5493515401720',
+            productos: [],
+            
+            async init() {
+                const pat = 'patVHWTWnD8saN2A6.89c3770ba6e4d03d49ed51cd131470dcb3ac37ad77def3a9a6d7defe3cee400e';
+                const baseId = 'appMZfOgf8iB9g9h5';
+                const tableId = 'tblhHTaNDvibLKHL5';
+                
+                try {
+                    const res = await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}`, {
+                        headers: { 'Authorization': `Bearer ${pat}` }
+                    });
+                    const data = await res.json();
+                    
+                    if(data.records) {
+                        this.productos = data.records.map(r => {
+                            const f = r.fields;
+                            return {
+                                id: r.id,
+                                nombre: f.Nombre || '',
+                                categoria: f.Categoria || '',
+                                precio: f.Precio || 'Consultar',
+                                descripcion: f.Descripcion || '',
+                                oculto: f.Oculto === true,
+                                imagen: (f.Foto && f.Foto.length > 0) ? f.Foto[0].url : ''
+                            };
+                        }).filter(p => p.nombre && p.nombre.trim() !== '');
+                    }
+                } catch(err) {
+                    console.error("Error al cargar Airtable:", err);
+                } finally {
+                    this.loading = false;
+                }
+            },
+
             get whatsappUrl()  { return `https://wa.me/${this.telefono}`; },
             generarLink(nombre){ return `https://wa.me/${this.telefono}?text=Hola,%20quisiera%20consultar%20por%20el%20${nombre}`; },
-            productos: lista,
+            
             get productosFiltrados() {
                 if (this.search === '') return [];
                 return this.productos.filter(p =>
